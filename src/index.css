@@ -1,0 +1,171 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: 210 40% 98%;
+    --foreground: 222.2 84% 4.9%;
+    --card: 210 40% 98%;
+    --card-foreground: 222.2 84% 4.9%;
+    --popover: 210 40% 98%;
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 263.4 70% 50.4%;
+    --radius: 0.5rem; /* تصغير الزوايا للأجهزة المحمولة */
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 263.4 70% 50.4%;
+    --primary-foreground: 210 40% 98%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 263.4 70% 50.4%;
+  }
+
+  /* تحسينات للأجهزة المحمولة */
+  html {
+    font-size: 16px;
+    -webkit-text-size-adjust: 100%;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  body {
+    @apply bg-background text-foreground min-w-[320px] overflow-x-hidden;
+    font-family: 'Cairo', sans-serif;
+    text-rendering: optimizeLegibility;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  input, 
+  select,
+  textarea,
+  button {
+    @apply text-base;
+    min-height: 44px; /* حجم لمسي مناسب */
+  }
+
+  /* تحسينات للبطاقات */
+  .card {
+    @apply w-full max-w-full overflow-hidden;
+  }
+
+  /* تحسينات للتاريخ بيكر */
+  .react-datepicker {
+    font-size: 1rem !important;
+    width: 100% !important;
+  }
+
+  .react-datepicker__month-container {
+    width: 100% !important;
+  }
+
+  /* تحسينات للشريط الجانبي */
+  .SelectContent {
+    scrollbar-gutter: stable;
+    -webkit-overflow-scrolling: touch;
+    max-height: 60vh;
+  }
+
+  .SelectContent::-webkit-scrollbar {
+    width: 6px;
+  }
+
+  .SelectContent::-webkit-scrollbar-track {
+    background: #f1f1f1;
+  }
+
+  .SelectContent::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+  }
+
+  .SelectContent::-webkit-scrollbar-thumb:hover {
+    background: #555;
+  }
+}
+
+/* وسائط الاستجابة */
+@layer utilities {
+  @media (max-width: 768px) {
+    /* تصغير الهوامش على الأجهزة المحمولة */
+    .container {
+      @apply px-4;
+    }
+
+    /* تعديل حجم النصوص */
+    h1 {
+      @apply text-2xl;
+    }
+
+    h2 {
+      @apply text-xl;
+    }
+
+    /* تحسينات للجداول */
+    table {
+      @apply block overflow-x-auto;
+    }
+
+    /* تحسينات للأزرار */
+    .btn-lg {
+      @apply px-4 py-2 text-sm;
+    }
+
+    /* تحسينات للفورمات */
+    .form-grid {
+      @apply grid-cols-1;
+    }
+  }
+
+  @media (max-width: 480px) {
+    /* تحسينات إضافية للشاشات الصغيرة جدًا */
+    :root {
+      --radius: 0.25rem;
+    }
+
+    .text-lg {
+      @apply text-base;
+    }
+
+    .p-6 {
+      @apply p-4;
+    }
+
+    .gap-6 {
+      @apply gap-3;
+    }
+  }
+}
+
+/* تحسينات للوضع الداكن على الأجهزة المحمولة */
+@media (prefers-color-scheme: dark) {
+  .dark\:bg-gray-900 {
+    background-color: rgba(17, 24, 39, 0.95);
+  }
+}
