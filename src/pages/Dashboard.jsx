@@ -278,7 +278,7 @@ const Dashboard = () => {
           لوحة التحكم
         </motion.h1>
 
-        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
           {statCards.map((stat, index) => (
             <motion.div
               key={stat.title}
@@ -289,7 +289,7 @@ const Dashboard = () => {
               <StatCard {...stat} />
             </motion.div>
           ))}
-        </div>
+        </div> */}
 
         <div className="space-y-6">
           <Card>
