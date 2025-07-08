@@ -13,6 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/u
 import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from '@/components/ui/alert-dialog';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { getEmployeesOnLeaveToday } from '@/utils/absenceUtils';
 
 const AbsenceEditForm = ({ absence, employees, onSave, onCancel }) => {
   const [editData, setEditData] = useState(absence);
@@ -38,7 +39,7 @@ const AbsenceEditForm = ({ absence, employees, onSave, onCancel }) => {
       <div>
         <Label htmlFor="edit-employee_id" className="text-foreground">الموظف *</Label>
         <Select value={editData.employee_id} onValueChange={(value) => handleInputChange('employee_id', value)}>
-          <SelectTrigger id="edit-employee_id" className="w-full">
+          <SelectTrigger id="edit-employee_id" className="form-input">
             <SelectValue placeholder="اختر الموظف" />
           </SelectTrigger>
           <SelectContent className="max-h-[300px] overflow-y-auto relative">
@@ -54,7 +55,7 @@ const AbsenceEditForm = ({ absence, employees, onSave, onCancel }) => {
       <div>
         <Label htmlFor="edit-registration_type" className="text-foreground">نوع التسجيل *</Label>
         <Select value={editData.registration_type} onValueChange={(value) => handleInputChange('registration_type', value)}>
-          <SelectTrigger id="edit-registration_type" className="w-full">
+          <SelectTrigger id="edit-registration_type" className="form-input">
             <SelectValue placeholder="اختر نوع التسجيل" />
           </SelectTrigger>
           <SelectContent>
@@ -67,7 +68,7 @@ const AbsenceEditForm = ({ absence, employees, onSave, onCancel }) => {
         <div>
           <Label htmlFor="edit-leave_type" className="text-foreground">نوع الإجازة *</Label>
           <Select value={editData.leave_type} onValueChange={(value) => handleInputChange('leave_type', value)}>
-            <SelectTrigger id="edit-leave_type" className="w-full">
+            <SelectTrigger id="edit-leave_type" className="form-input">
               <SelectValue placeholder="اختر نوع الإجازة" />
             </SelectTrigger>
             <SelectContent>
@@ -117,9 +118,9 @@ const AbsenceEditForm = ({ absence, employees, onSave, onCancel }) => {
           </div>
         </div>
       </div>
-      <div className="flex flex-col sm:flex-row justify-end gap-2">
-        <Button variant="outline" onClick={onCancel} className="w-full sm:w-auto">إلغاء</Button>
-        <Button onClick={() => onSave(editData)} className="w-full sm:w-auto btn-gradient">حفظ التغييرات</Button>
+      <div className="flex justify-end gap-2">
+        <Button variant="outline" onClick={onCancel}>إلغاء</Button>
+        <Button onClick={() => onSave(editData)} className="btn-gradient">حفظ التغييرات</Button>
       </div>
     </div>
   );
@@ -135,7 +136,7 @@ const Absences = () => {
     leave_type: '',
     start_date: '',
     end_date: '',
-    employee_type: 'أصلي'
+    
   });
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
@@ -296,11 +297,11 @@ const Absences = () => {
         </Helmet>
         
         <div className="space-y-6">
-          <h1 className="text-2xl md:text-3xl font-bold text-center md:text-right">إدارة الغياب والإجازات</h1>
+          <h1 className="text-3xl font-bold">إدارة الغياب والإجازات</h1>
           
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg md:text-xl">إحصائيات اليوم</CardTitle>
+              <CardTitle>إحصائيات اليوم</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -343,7 +344,7 @@ const Absences = () => {
 
           <Card>
             <CardHeader>
-              <CardTitle className="text-lg md:text-xl">اختر موظف لمعرفة عدد أيام الغياب والإجازات</CardTitle>
+              <CardTitle>اختر موظف لمعرفة عدد أيام الغياب والإجازات</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="flex flex-col gap-4">
@@ -369,7 +370,7 @@ const Absences = () => {
               </div>
               
               {selectedEmployee && (
-                <div className="mt-4 grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div className="mt-4 grid grid-cols-2 gap-4">
                   <Card className="bg-red-100 dark:bg-red-900/30 border-red-200 dark:border-red-800">
                     <CardHeader className="pb-2">
                       <CardTitle className="text-sm font-medium text-red-800 dark:text-red-200">
@@ -400,17 +401,17 @@ const Absences = () => {
             </CardContent>
           </Card>
 
-          <div className="grid gap-6 lg:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg md:text-xl">تسجيل غياب أو إجازة</CardTitle>
+                <CardTitle>تسجيل غياب أو إجازة</CardTitle>
               </CardHeader>
               <CardContent>
                 <form onSubmit={handleSubmit} className="space-y-4">
                   <div className="space-y-2">
                     <Label htmlFor="employee_id">الموظف</Label>
                     <Select dir="rtl" value={formData.employee_id} onValueChange={(value) => handleSelectChange('employee_id', value)}>
-                      <SelectTrigger className="w-full">
+                      <SelectTrigger>
                         <SelectValue placeholder="اختر الموظف" />
                       </SelectTrigger>
                       <SelectContent className="max-h-[300px] overflow-y-auto relative">
@@ -428,7 +429,7 @@ const Absences = () => {
                   <div className="space-y-2">
                     <Label htmlFor="registration_type">نوع التسجيل</Label>
                     <Select dir="rtl" value={formData.registration_type} onValueChange={(value) => handleSelectChange('registration_type', value)}>
-                      <SelectTrigger className="w-full"><SelectValue /></SelectTrigger>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
                       <SelectContent>
                         <SelectItem value="غياب">غياب</SelectItem>
                         <SelectItem value="إجازة">إجازة</SelectItem>
@@ -439,7 +440,7 @@ const Absences = () => {
                     <div className="space-y-2">
                       <Label htmlFor="leave_type">نوع الإجازة</Label>
                       <Select dir="rtl" value={formData.leave_type} onValueChange={(value) => handleSelectChange('leave_type', value)}>
-                        <SelectTrigger className="w-full"><SelectValue placeholder="اختر نوع الإجازة" /></SelectTrigger>
+                        <SelectTrigger><SelectValue placeholder="اختر نوع الإجازة" /></SelectTrigger>
                         <SelectContent>
                           <SelectItem value="عارضة">عارضة</SelectItem>
                           <SelectItem value="مرضية">مرضية</SelectItem>
@@ -452,7 +453,7 @@ const Absences = () => {
                       </Select>
                     </div>
                   )}
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
                       <Label htmlFor="start_date">من تاريخ</Label>
                       <div className="relative">
@@ -496,7 +497,7 @@ const Absences = () => {
             
             <Card>
               <CardHeader>
-                <CardTitle className="text-lg md:text-xl">سجل الغياب والإجازات</CardTitle>
+                <CardTitle>سجل الغياب والإجازات</CardTitle>
               </CardHeader>
               <CardContent>
                 <Tabs defaultValue="absence" className="w-full">
@@ -508,16 +509,13 @@ const Absences = () => {
                   <TabsContent value="absence" className="max-h-96 overflow-y-auto">
                     <div className="space-y-2 mt-4">
                       {absenceRecords.map(absence => (
-                        <div key={absence.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 rounded-md bg-secondary/50 gap-2">
-                          <div className="flex-1">
+                        <div key={absence.id} className="flex justify-between items-center p-2 rounded-md bg-secondary/50">
+                          <div>
                             <p className="font-semibold">{employees.find(e => e.id === absence.employee_id)?.full_name}</p>
                             <p className="text-sm text-muted-foreground">{absence.registration_type}</p>
-                            <p className="text-sm text-muted-foreground sm:hidden">
-                              {absence.start_date} - {absence.end_date || absence.start_date}
-                            </p>
                           </div>
-                          <div className="flex items-center gap-2 self-end sm:self-auto">
-                            <div className="text-sm text-muted-foreground hidden sm:block">
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm text-muted-foreground">
                               {absence.start_date} - {absence.end_date || absence.start_date}
                             </div>
                             <Button 
@@ -566,16 +564,13 @@ const Absences = () => {
                   <TabsContent value="leave" className="max-h-96 overflow-y-auto">
                     <div className="space-y-2 mt-4">
                       {leaveRecords.map(leave => (
-                        <div key={leave.id} className="flex flex-col sm:flex-row justify-between items-start sm:items-center p-2 rounded-md bg-secondary/50 gap-2">
-                          <div className="flex-1">
+                        <div key={leave.id} className="flex justify-between items-center p-2 rounded-md bg-secondary/50">
+                          <div>
                             <p className="font-semibold">{employees.find(e => e.id === leave.employee_id)?.full_name}</p>
                             <p className="text-sm text-muted-foreground">{leave.registration_type} - {leave.leave_type}</p>
-                            <p className="text-sm text-muted-foreground sm:hidden">
-                              {leave.start_date} - {leave.end_date || leave.start_date}
-                            </p>
                           </div>
-                          <div className="flex items-center gap-2 self-end sm:self-auto">
-                            <div className="text-sm text-muted-foreground hidden sm:block">
+                          <div className="flex items-center gap-2">
+                            <div className="text-sm text-muted-foreground">
                               {leave.start_date} - {leave.end_date || leave.start_date}
                             </div>
                             <Button 
@@ -649,7 +644,7 @@ const Absences = () => {
           <p className="text-white-600 dark:text-white-400">
             جميع الحقوق محفوظة لمدرسة الشهيد المقدم محمد عبداللاه صالح الصناعية العسكرية المشتركة 2025
           </p>
-          <p className="mt-1 text-sm md:text-lg flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400">
+          <p className="mt-1 text-lg flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400">
             خاص مستر علاء فريد - <Phone className="h-4 w-4 text-blue-600 dark:text-red-400" /> 01009209003
           </p>
         </div>
