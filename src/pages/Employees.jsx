@@ -62,6 +62,16 @@ const Employees = () => {
   const [formData, setFormData] = useState(initialEmployeeState);
   const [loading, setLoading] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
+  const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
 
   const fetchEmployees = useCallback(async () => {
     setLoading(true);
@@ -92,8 +102,8 @@ const Employees = () => {
   useEffect(() => {
     const filtered = searchQuery
       ? employees.filter(emp => 
-          emp.full_name.includes(searchQuery) || 
-          emp.national_id.includes(searchQuery))
+          emp.full_name?.includes(searchQuery) || 
+          emp.national_id?.includes(searchQuery))
       : employees;
       
     setFilteredEmployees(filtered);
@@ -223,7 +233,7 @@ const Employees = () => {
 
   if (loading && employees.length === 0) {
     return (
-      <div className="flex items-center justify-center h-full">
+      <div className="flex items-center justify-center h-screen">
         <div className="animate-spin rounded-full h-16 w-16 border-t-2 border-b-2 border-primary"></div>
       </div>
     );
@@ -231,13 +241,13 @@ const Employees = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow container mx-auto p-4">
+      <div className={`flex-grow container mx-auto ${isMobile ? 'px-2' : 'px-4'} py-4`}>
         <Helmet>
           <title>شؤون العاملين - نظام الإدارة</title>
           <meta name="description" content="إدارة بيانات الموظفين." />
         </Helmet>
         
-        <div className="space-y-6">
+        <div className="space-y-4 md:space-y-6">
           <EmployeePageHeader 
             onSave={handleSave} 
             onAddNew={handleAddNew} 
@@ -245,9 +255,10 @@ const Employees = () => {
             loading={loading} 
             hasData={!!formData.id} 
             employeeName={formData.full_name} 
+            isMobile={isMobile}
           />
           
-          <Card>
+          <Card className={isMobile ? 'border-0 shadow-none' : ''}>
             <EmployeeCardHeader 
               onNavigate={navigateEmployees} 
               employeeCount={filteredEmployees.length} 
@@ -255,26 +266,28 @@ const Employees = () => {
               canNavigate={filteredEmployees.length > 1} 
               onSearch={setSearchQuery} 
               initialQuery={searchQuery} 
+              isMobile={isMobile}
             />
-            <CardContent>
+            <CardContent className={isMobile ? 'p-2' : 'p-6'}>
               <EmployeeFormTabs 
                 formData={formData} 
                 handleInputChange={handleInputChange} 
                 handleSelectChange={handleSelectChange} 
                 handleCheckboxChange={handleCheckboxChange} 
+                isMobile={isMobile}
               />
             </CardContent>
           </Card>
         </div>
       </div>
 
-      {/* Footer Section */}
+      {/* Responsive Footer Section */}
       <footer className="bg-gray-500 dark:bg-gray-900 py-4 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm">
+        <div className={`container mx-auto ${isMobile ? 'px-2' : 'px-4'} text-center text-sm`}>
           <p className="text-white-600 dark:text-white-400">
             جميع الحقوق محفوظة لمدرسة الشهيد المقدم محمد عبداللاه صالح الصناعية العسكرية المشتركة 2025
           </p>
-          <p className="mt-1 text-lg flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400">
+          <p className={`mt-1 ${isMobile ? 'text-sm' : 'text-lg'} flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400`}>
             خاص مستر علاء فريد - <Phone className="h-4 w-4 text-blue-600 dark:text-red-400" /> 01009209003
           </p>
         </div>
