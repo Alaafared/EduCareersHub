@@ -12,7 +12,6 @@ import * as XLSX from 'xlsx';
 import { getEmployeesOnLeaveToday } from '@/utils/absenceUtils';
 import { Phone } from 'lucide-react';
 
-
 import {
   Dialog,
   DialogContent,
@@ -20,7 +19,8 @@ import {
   DialogTitle,
   DialogFooter,
 } from '@/components/ui/dialog';
-const today = new Date().toISOString().split('T')[0]; // تأكد من نفس التنسيق
+
+const today = new Date().toISOString().split('T')[0];
 
 const StatCard = ({ icon, title, value, color }) => (
   <Card className="bg-card border-border">
@@ -38,7 +38,7 @@ const ActionButton = ({ icon, label, path, onClick, navigate, disabled = false }
   <motion.div whileHover={{ scale: disabled ? 1 : 1.05 }} whileTap={{ scale: disabled ? 1 : 0.95 }}>
     <Button
       variant="outline"
-      className="w-full h-24 flex flex-col gap-2 justify-center text-base"
+      className="w-full h-20 sm:h-24 flex flex-col gap-1 sm:gap-2 justify-center text-sm sm:text-base"
       onClick={() => path ? navigate(path) : onClick()}
       disabled={disabled}
     >
@@ -68,7 +68,7 @@ const Dashboard = () => {
     try {
       setLoading(true);
       const employees = await employeeApi.getAll();
-      const absences = await absenceApi.getAll(); // تغيير هنا لنجلب كل السجلات
+      const absences = await absenceApi.getAll();
       
       const absentIds = new Set(
         absences
@@ -82,13 +82,13 @@ const Dashboard = () => {
           .map(a => a.employee_id)
       );
   
-      const leavesToday = getEmployeesOnLeaveToday(absences); // استخدام الدالة المشتركة
+      const leavesToday = getEmployeesOnLeaveToday(absences);
   
       setStats({ 
         totalEmployees: employees.length, 
         absentToday: absentIds.size, 
         presentToday: employees.length - absentIds.size,
-        leavesToday // استخدام القيمة المحسوبة
+        leavesToday
       });
     } catch (error) {
       toast({
@@ -239,17 +239,17 @@ const Dashboard = () => {
 
   const mainActions = [
     { 
-      icon: <Users className="h-6 w-6" />, 
+      icon: <Users className="h-5 w-5 sm:h-6 sm:w-6" />, 
       label: 'تسجيل بيانات الموظفين', 
       path: '/employees' 
     },
     { 
-      icon: <FileText className="h-6 w-6" />, 
+      icon: <FileText className="h-5 w-5 sm:h-6 sm:w-6" />, 
       label: 'المطبوعات والتقارير', 
       path: '/reports' 
     },
     { 
-      icon: <Settings className="h-6 w-6" />, 
+      icon: <Settings className="h-5 w-5 sm:h-6 sm:w-6" />, 
       label: 'إعدادات النظام', 
       path: '/settings' 
     },
@@ -265,7 +265,7 @@ const Dashboard = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="container mx-auto p-4 flex-grow">
+      <div className="container mx-auto px-2 sm:px-4 py-4 flex-grow">
         <Helmet>
           <title>لوحة التحكم - نظام إدارة شؤون العاملين</title>
         </Helmet>
@@ -273,12 +273,12 @@ const Dashboard = () => {
         <motion.h1 
           initial={{ opacity: 0, x: -50 }}
           animate={{ opacity: 1, x: 0 }}
-          className="text-3xl font-bold mb-8"
+          className="text-2xl sm:text-3xl font-bold mb-4 sm:mb-8 text-right"
         >
           لوحة التحكم
         </motion.h1>
 
-        {/* <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4 mb-8">
+        {/* <div className="grid gap-2 sm:gap-4 grid-cols-2 md:grid-cols-4 mb-4 sm:mb-8">
           {statCards.map((stat, index) => (
             <motion.div
               key={stat.title}
@@ -291,12 +291,12 @@ const Dashboard = () => {
           ))}
         </div> */}
 
-        <div className="space-y-6">
+        <div className="space-y-4 sm:space-y-6">
           <Card>
             <CardHeader>
-              <CardTitle>الإجراءات السريعة</CardTitle>
+              <CardTitle className="text-right">الإجراءات السريعة</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-4 md:grid-cols-3">
+            <CardContent className="grid gap-2 sm:gap-4 grid-cols-1 sm:grid-cols-3">
               {mainActions.map((action, index) => (
                 <ActionButton
                   key={index}
@@ -307,23 +307,23 @@ const Dashboard = () => {
             </CardContent>
           </Card>
 
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-4 sm:gap-6 grid-cols-1 md:grid-cols-2">
             <Card>
               <CardHeader>
-                <CardTitle>البحث السريع عن موظف</CardTitle>
+                <CardTitle className="text-right">البحث السريع عن موظف</CardTitle>
               </CardHeader>
               <CardContent>
                 <div className="relative">
-                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 sm:h-5 sm:w-5 text-muted-foreground" />
                   <Input
                     placeholder="ابحث بالاسم أو الرقم القومي..."
-                    className="pr-4 pl-10"
+                    className="pr-4 pl-10 text-right"
                     value={searchQuery}
                     onChange={(e) => setSearchQuery(e.target.value)}
                     onKeyPress={(e) => e.key === 'Enter' && handleSearch()}
                   />
                 </div>
-                <Button className="mt-4 w-full" onClick={handleSearch}>
+                <Button className="mt-3 sm:mt-4 w-full" onClick={handleSearch}>
                   بحث
                 </Button>
               </CardContent>
@@ -331,9 +331,9 @@ const Dashboard = () => {
 
             <Card>
               <CardHeader>
-                <CardTitle>التعامل مع ملفات Excel</CardTitle>
+                <CardTitle className="text-right">التعامل مع ملفات Excel</CardTitle>
               </CardHeader>
-              <CardContent className="grid grid-cols-2 gap-4">
+              <CardContent className="grid grid-cols-1 sm:grid-cols-2 gap-2 sm:gap-4">
                 <input
                   type="file"
                   ref={fileInputRef}
@@ -342,13 +342,13 @@ const Dashboard = () => {
                   accept=".xlsx, .xls"
                 />
                 <ActionButton
-                  icon={importing ? <Loader2 className="h-6 w-6 animate-spin" /> : <FileUp className="h-6 w-6" />}
+                  icon={importing ? <Loader2 className="h-5 w-5 sm:h-6 sm:w-6 animate-spin" /> : <FileUp className="h-5 w-5 sm:h-6 sm:w-6" />}
                   label={importing ? "جاري الاستيراد..." : "استيراد من Excel"}
                   onClick={() => fileInputRef.current.click()}
                   disabled={importing}
                 />
                 <ActionButton
-                  icon={<FileDown className="h-6 w-6" />}
+                  icon={<FileDown className="h-5 w-5 sm:h-6 sm:w-6" />}
                   label="تصدير إلى Excel"
                   onClick={handleExport}
                 />
@@ -359,12 +359,12 @@ const Dashboard = () => {
 
         {previewData && (
           <Dialog open={!!previewData} onOpenChange={(open) => !open && setPreviewData(null)}>
-            <DialogContent className="max-w-4xl max-h-[90vh]">
+            <DialogContent className="max-w-[95vw] sm:max-w-4xl max-h-[90vh]">
               <DialogHeader>
-                <DialogTitle>معاينة البيانات قبل الاستيراد</DialogTitle>
+                <DialogTitle className="text-right">معاينة البيانات قبل الاستيراد</DialogTitle>
               </DialogHeader>
               <div className="overflow-auto">
-                <table className="w-full border-collapse">
+                <table className="w-full border-collapse text-sm sm:text-base">
                   <thead>
                     <tr className="bg-secondary">
                       {Object.keys(previewData[0]).map(key => (
@@ -376,13 +376,13 @@ const Dashboard = () => {
                     {previewData.slice(0, 5).map((row, i) => (
                       <tr key={i} className={i % 2 === 0 ? 'bg-background' : 'bg-secondary/50'}>
                         {Object.values(row).map((val, j) => (
-                          <td key={j} className="p-2 border">{String(val)}</td>
+                          <td key={j} className="p-2 border text-right">{String(val)}</td>
                         ))}
                       </tr>
                     ))}
                   </tbody>
                 </table>
-                <p className="mt-2 text-sm text-muted-foreground">
+                <p className="mt-2 text-sm text-muted-foreground text-right">
                   عرض {Math.min(5, previewData.length)} من أصل {previewData.length} سجل
                 </p>
               </div>
@@ -403,12 +403,13 @@ const Dashboard = () => {
       </div>
 
       {/* Footer Section */}
-      <footer className="bg-gray-500 dark:bg-gray-900 py-4 mt-auto">
-        <div className="container mx-auto px-4 text-white-600 text-center text-sm text-white-600 dark:text-gray-400">
-          <p >جميع الحقوق محفوظة لمدرسة الشهيد المقدم محمد عبداللاه صالح الصناعية العسكرية المشتركة 2025</p>
-          <p className="mt-1 text-lg flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400">
-      خاص مستر علاء فريد - <Phone className="h-4 w-4 text-blue-600 dark:text-red-400" /> 01009209003
-    </p>       </div>
+      <footer className="bg-gray-500 dark:bg-gray-900 py-3 sm:py-4 mt-auto">
+        <div className="container mx-auto px-2 sm:px-4 text-center text-xs sm:text-sm text-white dark:text-gray-400">
+          <p>جميع الحقوق محفوظة لمدرسة الشهيد المقدم محمد عبداللاه صالح الصناعية العسكرية المشتركة 2025</p>
+          <p className="mt-1 text-sm sm:text-base flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400">
+            خاص مستر علاء فريد - <Phone className="h-3 w-3 sm:h-4 sm:w-4 text-blue-600 dark:text-red-400" /> 01009209003
+          </p>
+        </div>
       </footer>
     </div>
   );
