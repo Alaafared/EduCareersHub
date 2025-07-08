@@ -12,6 +12,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from '@/components/ui/dialog';
 import { Label } from '@/components/ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 
 const format = (date, formatStr) => {
   if (!date) return '';
@@ -33,6 +34,9 @@ const Reports = () => {
   const [showDatePicker, setShowDatePicker] = useState(false);
   const [startDate, setStartDate] = useState(null);
   const [endDate, setEndDate] = useState(null);
+  const [delegatedToSchool, setDelegatedToSchool] = useState('0');
+  const [delegatedFromSchool, setDelegatedFromSchool] = useState('0');
+  const [showDelegationSettings, setShowDelegationSettings] = useState(false);
   const reportRef = useRef();
 
   const reportsList = [
@@ -230,7 +234,15 @@ const Reports = () => {
   const generateReport = async (reportId, qualifications, reportName) => {
     if (reportId === 'absence_by_date') {
       setShowDatePicker(true);
+      setShowDelegationSettings(false);
       return;
+    }
+
+    // إظهار إعدادات المنتدبين فقط لتقرير حصر غياب اليوم الحالي
+    if (reportId === 'daily_absence') {
+      setShowDelegationSettings(true);
+    } else {
+      setShowDelegationSettings(false);
     }
 
     setIsLoading(true);
@@ -260,13 +272,13 @@ const Reports = () => {
         case 'weekly_absence':
           const totalEmployees = await employeeApi.getAll();
           const totalCount = totalEmployees.length;
+          const allAbsences = await absenceApi.getAll();
           
           const today = new Date();
           const oneWeekAgo = new Date(today);
           oneWeekAgo.setDate(today.getDate() - 7);
           
           const weekData = [];
-          const allAbsences = await absenceApi.getAll();
           
           let daysProcessed = 0;
           let currentDay = 0;
@@ -327,7 +339,6 @@ const Reports = () => {
           const dateStr = format(todayDate, 'yyyy-MM-dd');
           const allEmps = await employeeApi.getAll();
           const totalEmpCount = allEmps.length;
-          
           const absences = await absenceApi.getAll();
           
           const todayAbsences = absences.filter(absence => 
@@ -342,14 +353,23 @@ const Reports = () => {
             dateStr <= (leave.end_date || leave.start_date)
           ).length;
           
+          // حساب العدد الإجمالي المعدل بعد إضافة المنتدبين وخصم المغادرين
+          const adjustedTotal = totalEmpCount + parseInt(delegatedToSchool) - parseInt(delegatedFromSchool);
+          
+          // حساب الحضور المعدل
+          const adjustedAttendance = adjustedTotal - todayAbsences - todayLeaves;
+          
           data = [{
             'اليوم': daysOfWeek[dayOfWeek],
             'التاريخ': dateStr,
             'إجمالي الموظفين': totalEmpCount,
-            'إجمالي الحضور': totalEmpCount - todayAbsences - todayLeaves,
+            'منتدبين إلى المدرسة': delegatedToSchool,
+            'منتدبين من المدرسة': delegatedFromSchool,
+            'إجمالي المعدل': adjustedTotal,
             'إجمالي الغياب': todayAbsences,
             'إجمالي الإجازات': todayLeaves,
-            'نسبة الغياب': totalEmpCount > 0 ? `${Math.round((todayAbsences / totalEmpCount) * 100)}%` : '0%'
+            'إجمالي الحضور': adjustedAttendance,
+            'نسبة الغياب': adjustedTotal > 0 ? `${Math.round((todayAbsences / adjustedTotal) * 100)}%` : '0%'
           }];
           
           fileName = `حصر_غياب_${dateStr}`;
@@ -383,6 +403,54 @@ const Reports = () => {
         
         <div className="space-y-6">
           <h1 className="text-3xl font-bold">المطبوعات والتقارير</h1>
+          
+          {/* إضافة خيارات المنتدبين - تظهر فقط عند اختيار تقرير حصر غياب اليوم الحالي */}
+          {showDelegationSettings && (
+            <Card>
+              <CardHeader>
+                <CardTitle>إعدادات تقرير الغياب اليومي</CardTitle>
+              </CardHeader>
+              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="delegatedToSchool">منتدبين إلى المدرسة</Label>
+                  <Select 
+                    value={delegatedToSchool} 
+                    onValueChange={(value) => setDelegatedToSchool(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر عدد المنتدبين إلى المدرسة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...Array(11).keys()].map(num => (
+                        <SelectItem key={`to-${num}`} value={num.toString()}>
+                          {num}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="delegatedFromSchool">منتدبين من المدرسة</Label>
+                  <Select 
+                    value={delegatedFromSchool} 
+                    onValueChange={(value) => setDelegatedFromSchool(value)}
+                  >
+                    <SelectTrigger>
+                      <SelectValue placeholder="اختر عدد المنتدبين من المدرسة" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {[...Array(11).keys()].map(num => (
+                        <SelectItem key={`from-${num}`} value={num.toString()}>
+                          {num}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card>
             <CardHeader>
               <CardTitle>التقارير المتاحة</CardTitle>
@@ -475,10 +543,10 @@ const Reports = () => {
                       <Printer className="ml-2 h-4 w-4" />
                       طباعة
                     </Button>
-                    {/* <Button variant="outline" onClick={exportToPDF} disabled={reportData.length === 0}>
+                    <Button variant="outline" onClick={exportToPDF} disabled={reportData.length === 0}>
                       <Printer className="ml-2 h-4 w-4" />
                       حفظ PDF
-                    </Button> */}
+                    </Button>
                   </div>
                 </div>
               </CardHeader>
