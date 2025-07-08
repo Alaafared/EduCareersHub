@@ -268,12 +268,12 @@ const Reports = () => {
           const allEmployees = await employeeApi.getAll();
           data = allEmployees.map(emp => ({
             'الاسم': emp.full_name,
-            'الكود': emp.code,
+            'كود المعلم': emp.teacher_code,
             'الرقم القومي': emp.national_id,
             'تاريخ الميلاد': emp.birth_date,
-            'التخصص': emp.specialization,
+            'مادة التخصص على الكادر': emp.cadre_specialization,
             'مادة التدريس': emp.teaching_subject,
-            'رقم الهاتف': emp.phone_number,
+            'رقم الهاتف': emp.phone,
             'العنوان': emp.address,
             'الحالة الاجتماعية': emp.marital_status
           }));
