@@ -590,7 +590,7 @@ const Reports = () => {
                       <Printer className="ml-2 h-4 w-4" />
                       {isMobile ? 'طباعة' : 'طباعة التقرير'}
                     </Button>
-                    <Button 
+{/*                     <Button 
                       variant="outline" 
                       onClick={exportToPDF} 
                       disabled={reportData.length === 0}
@@ -599,7 +599,7 @@ const Reports = () => {
                     >
                       <Printer className="ml-2 h-4 w-4" />
                       {isMobile ? 'PDF' : 'حفظ PDF'}
-                    </Button>
+                    </Button> */}
                   </div>
                 </div>
               </CardHeader>
