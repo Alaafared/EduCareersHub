@@ -1,4 +1,4 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Helmet } from 'react-helmet-async';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -37,13 +37,24 @@ const Reports = () => {
   const [delegatedToSchool, setDelegatedToSchool] = useState('0');
   const [delegatedFromSchool, setDelegatedFromSchool] = useState('0');
   const [showDelegationSettings, setShowDelegationSettings] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
   const reportRef = useRef();
 
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth < 768);
+    };
+
+    handleResize();
+    window.addEventListener('resize', handleResize);
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const reportsList = [
-    { id: 'all_employees', name: "كشف بجميع الموظفين", qualifications: null },
-    { id: 'weekly_absence', name: "إحصاء الأسبوع الأخير", qualifications: null },
-    { id: 'daily_absence', name: "حصر غياب اليوم الحالي", qualifications: null },
-    { id: 'absence_by_date', name: "تقرير الغياب حسب التاريخ", qualifications: null },
+    { id: 'all_employees', name: "كشف بجميع الموظفين", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
+    { id: 'weekly_absence', name: "إحصاء الأسبوع الأخير", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
+    { id: 'daily_absence', name: "حصر غياب اليوم الحالي", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
+    { id: 'absence_by_date', name: "تقرير الغياب حسب التاريخ", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
   ];
 
   const exportToExcel = (data, fileName) => {
@@ -119,7 +130,7 @@ const Reports = () => {
   
     try {
       const doc = new jsPDF({
-        orientation: 'landscape',
+        orientation: isMobile ? 'portrait' : 'landscape',
         unit: 'mm'
       });
   
@@ -395,20 +406,20 @@ const Reports = () => {
 
   return (
     <div className="flex flex-col min-h-screen">
-      <div className="flex-grow container mx-auto p-4">
+      <div className={`flex-grow container mx-auto ${isMobile ? 'px-2' : 'px-4'} py-4`}>
         <Helmet>
           <title>المطبوعات والتقارير - نظام إدارة شؤون العاملين</title>
           <meta name="description" content="إنشاء وعرض التقارير المختلفة." />
         </Helmet>
         
-        <div className="space-y-6">
-          <h1 className="text-3xl font-bold">المطبوعات والتقارير</h1>
+        <div className="space-y-4 md:space-y-6">
+          <h1 className="text-2xl md:text-3xl font-bold text-center md:text-right">المطبوعات والتقارير</h1>
           
           {/* إضافة خيارات المنتدبين - تظهر فقط عند اختيار تقرير حصر غياب اليوم الحالي */}
           {showDelegationSettings && (
-            <Card>
+            <Card className={isMobile ? 'border-0 shadow-none' : ''}>
               <CardHeader>
-                <CardTitle>إعدادات تقرير الغياب اليومي</CardTitle>
+                <CardTitle className="text-lg md:text-xl">إعدادات تقرير الغياب اليومي</CardTitle>
               </CardHeader>
               <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
@@ -417,7 +428,7 @@ const Reports = () => {
                     value={delegatedToSchool} 
                     onValueChange={(value) => setDelegatedToSchool(value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={isMobile ? 'w-full' : ''}>
                       <SelectValue placeholder="اختر عدد المنتدبين إلى المدرسة" />
                     </SelectTrigger>
                     <SelectContent>
@@ -435,7 +446,7 @@ const Reports = () => {
                     value={delegatedFromSchool} 
                     onValueChange={(value) => setDelegatedFromSchool(value)}
                   >
-                    <SelectTrigger>
+                    <SelectTrigger className={isMobile ? 'w-full' : ''}>
                       <SelectValue placeholder="اختر عدد المنتدبين من المدرسة" />
                     </SelectTrigger>
                     <SelectContent>
@@ -451,32 +462,41 @@ const Reports = () => {
             </Card>
           )}
 
-          <Card>
+          <Card className={isMobile ? 'border-0 shadow-none' : ''}>
             <CardHeader>
-              <CardTitle>التقارير المتاحة</CardTitle>
+              <CardTitle className="text-lg md:text-xl">التقارير المتاحة</CardTitle>
             </CardHeader>
-            <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 md:gap-4">
               {reportsList.map((report) => (
                 <Button
                   key={report.id}
                   variant="outline"
-                  className="justify-start p-4 h-auto"
-                  onClick={() => generateReport(report.id, report.qualifications, report.name)}
+                  className={`justify-start p-3 md:p-4 h-auto ${isMobile ? 'flex-col items-center' : ''}`}
+                  onClick={() => generateReport(report.id, null, report.name)}
                   disabled={isLoading}
                 >
-                  <FileText className="ml-3 h-5 w-5 text-primary" />
-                  <span className="text-right">{report.name}</span>
+                  {isMobile ? (
+                    <>
+                      <div className="mb-1">{report.icon}</div>
+                      <span className="text-xs">{report.name}</span>
+                    </>
+                  ) : (
+                    <>
+                      {report.icon}
+                      <span>{report.name}</span>
+                    </>
+                  )}
                 </Button>
               ))}
             </CardContent>
           </Card>
 
           <Dialog open={showDatePicker} onOpenChange={setShowDatePicker}>
-            <DialogContent className="sm:max-w-[425px]">
+            <DialogContent className={`${isMobile ? 'w-[95%] rounded-md' : 'sm:max-w-[425px]'}`}>
               <DialogHeader>
-                <DialogTitle>اختر نطاق التاريخ</DialogTitle>
+                <DialogTitle className="text-lg md:text-xl">اختر نطاق التاريخ</DialogTitle>
               </DialogHeader>
-              <div className="grid grid-cols-2 gap-4 py-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4 py-4">
                 <div className="space-y-2">
                   <Label htmlFor="start_date">من تاريخ</Label>
                   <div className="relative">
@@ -517,15 +537,17 @@ const Reports = () => {
                   </div>
                 </div>
               </div>
-              <DialogFooter>
+              <DialogFooter className="flex flex-col md:flex-row gap-2">
                 <Button
                   variant="outline"
                   onClick={() => setShowDatePicker(false)}
+                  className="w-full md:w-auto"
                 >
                   إلغاء
                 </Button>
                 <Button
                   onClick={generateAbsenceReportByDate}
+                  className="w-full md:w-auto"
                 >
                   تأكيد
                 </Button>
@@ -534,23 +556,35 @@ const Reports = () => {
           </Dialog>
 
           {selectedReport && (
-            <Card ref={reportRef}>
+            <Card ref={reportRef} className={isMobile ? 'border-0 shadow-none' : ''}>
               <CardHeader>
-                <div className="flex justify-between items-center">
-                  <CardTitle>{reportTitle}</CardTitle>
+                <div className="flex flex-col md:flex-row md:justify-between md:items-center gap-2">
+                  <CardTitle className="text-lg md:text-xl">{reportTitle}</CardTitle>
                   <div className="flex gap-2">
-                    <Button variant="outline" onClick={handlePrint} disabled={reportData.length === 0}>
+                    <Button 
+                      variant="outline" 
+                      onClick={handlePrint} 
+                      disabled={reportData.length === 0}
+                      size={isMobile ? "sm" : "default"}
+                      className="flex-1 md:flex-none"
+                    >
                       <Printer className="ml-2 h-4 w-4" />
-                      طباعة
+                      {isMobile ? 'طباعة' : 'طباعة التقرير'}
                     </Button>
-                    <Button variant="outline" onClick={exportToPDF} disabled={reportData.length === 0}>
+                    <Button 
+                      variant="outline" 
+                      onClick={exportToPDF} 
+                      disabled={reportData.length === 0}
+                      size={isMobile ? "sm" : "default"}
+                      className="flex-1 md:flex-none"
+                    >
                       <Printer className="ml-2 h-4 w-4" />
-                      حفظ PDF
+                      {isMobile ? 'PDF' : 'حفظ PDF'}
                     </Button>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent>
+              <CardContent className={isMobile ? 'p-0' : 'p-6'}>
                 {isLoading ? (
                   <p className="text-center py-4">جاري تحميل البيانات...</p>
                 ) : reportData.length > 0 ? (
@@ -559,7 +593,7 @@ const Reports = () => {
                       <thead>
                         <tr className="bg-gray-800">
                           {Object.keys(reportData[0]).map((key) => (
-                            <th key={key} className="border p-3 text-center text-white font-medium">
+                            <th key={key} className={`border p-2 md:p-3 text-center text-white font-medium text-xs md:text-sm`}>
                               {key}
                             </th>
                           ))}
@@ -574,7 +608,7 @@ const Reports = () => {
                             {Object.values(row).map((value, i) => (
                               <td 
                                 key={i} 
-                                className="border p-3 text-center text-gray-800"
+                                className={`border p-2 md:p-3 text-center text-gray-800 text-xs md:text-sm`}
                               >
                                 {value || '-'}
                               </td>
@@ -594,11 +628,11 @@ const Reports = () => {
       </div>
 
       <footer className="bg-gray-500 dark:bg-gray-900 py-4 mt-auto">
-        <div className="container mx-auto px-4 text-center text-sm">
+        <div className={`container mx-auto ${isMobile ? 'px-2' : 'px-4'} text-center text-sm`}>
           <p className="text-white-600 dark:text-white-400">
             جميع الحقوق محفوظة لمدرسة الشهيد المقدم محمد عبداللاه صالح الصناعية العسكرية المشتركة 2025
           </p>
-          <p className="mt-1 text-lg flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400">
+          <p className={`mt-1 ${isMobile ? 'text-sm' : 'text-lg'} flex items-center justify-center gap-1 text-blue-200 dark:text-blue-400`}>
             خاص مستر علاء فريد - <Phone className="h-4 w-4 text-blue-600 dark:text-red-400" /> 01009209003
           </p>
         </div>
