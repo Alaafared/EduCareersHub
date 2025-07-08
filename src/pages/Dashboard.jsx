@@ -212,28 +212,28 @@ const Dashboard = () => {
 
   const statCards = [
     { 
-      icon: <Users className="h-4 w-4 text-muted-foreground" />, 
-      title: 'إجمالي الموظفين', 
-      value: stats.totalEmployees, 
-      color: '#8b5cf6' 
+      // icon: <Users className="h-4 w-4 text-muted-foreground" />, 
+      // title: 'إجمالي الموظفين', 
+      // value: stats.totalEmployees, 
+      // color: '#8b5cf6' 
     },
     { 
-      icon: <UserCheck className="h-4 w-4 text-muted-foreground" />, 
-      title: 'الحاضرون اليوم', 
-      value: stats.totalEmployees-stats.absentToday-stats.leavesToday, 
-      color: '#22c55e' 
+      // icon: <UserCheck className="h-4 w-4 text-muted-foreground" />, 
+      // title: 'الحاضرون اليوم', 
+      // value: stats.totalEmployees-stats.absentToday-stats.leavesToday, 
+      // color: '#22c55e' 
     },
     { 
-      icon: <UserX className="h-4 w-4 text-muted-foreground" />, 
-      title: 'الغائبون اليوم', 
-      value: stats.absentToday, 
-      color: '#ef4444' 
+      // icon: <UserX className="h-4 w-4 text-muted-foreground" />, 
+      // title: 'الغائبون اليوم', 
+      // value: stats.absentToday, 
+      // color: '#ef4444' 
     },
     { 
-      icon: <Sun className="h-4 w-4 text-muted-foreground" />, 
-      title: 'الإجازات اليوم', 
-      value: stats.leavesToday, 
-      color: '#f59e0b' 
+      // icon: <Sun className="h-4 w-4 text-muted-foreground" />, 
+      // title: 'الإجازات اليوم', 
+      // value: stats.leavesToday, 
+      // color: '#f59e0b' 
     },
   ];
 
