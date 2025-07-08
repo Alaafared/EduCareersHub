@@ -53,7 +53,7 @@ const Reports = () => {
   const reportsList = [
     { id: 'all_employees', name: "كشف بجميع الموظفين", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
     { id: 'weekly_absence', name: "إحصاء الأسبوع الأخير", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
-    { id: 'daily_absence', name: "حصر غياب اليوم الحالي", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
+    { id: 'daily_absence', name: "حصر القوة اليومية", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
     { id: 'absence_by_date', name: "تقرير الغياب حسب التاريخ", icon: <FileText className="ml-3 h-5 w-5 text-primary" /> },
   ];
 
@@ -85,14 +85,27 @@ const Reports = () => {
           <title>${reportTitle}</title>
           <style>
             body { font-family: Arial, sans-serif; margin: 20px; }
+            .header { display: flex; justify-content: space-between; margin-bottom: 20px; }
+            .header-text { text-align: right; line-height: 1.5; }
             h1 { text-align: center; margin-bottom: 20px; }
             table { width: 100%; border-collapse: collapse; margin-top: 20px; }
             th, td { border: 1px solid #ddd; padding: 8px; text-align: center; }
             th { background-color: #2c3e50; color: white; }
             tr:nth-child(even) { background-color: #f2f2f2; }
+            .footer { display: flex; justify-content: space-between; margin-top: 40px; }
+            .signature { width: 200px; border-top: 1px solid black; text-align: center; padding-top: 5px; }
           </style>
         </head>
         <body>
+          <div class="header">
+            <div class="header-text">
+              محافظة الاسماعيلية<br>
+              مديرية التربية والتعليم<br>
+              ادارة القنطرة شرق التعليمية<br>
+              مدرسة الشهيد المقدم محمد عبداللاه صالح الصناعية العسكرية المشتركة
+            </div>
+          </div>
+          
           <h1>${reportTitle}</h1>
           <table>
             <thead>
@@ -108,6 +121,12 @@ const Reports = () => {
               `).join('')}
             </tbody>
           </table>
+          
+          <div class="footer">
+            <div class="signature">توقيع  وكيل شئون الطلبة</div>
+            <div class="signature">توقيع مدير المدرسة </div>
+          </div>
+          
           <script>
             window.onload = function() {
               setTimeout(function() {
