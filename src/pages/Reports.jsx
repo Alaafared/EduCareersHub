@@ -436,50 +436,50 @@ const Reports = () => {
           
           {/* إضافة خيارات المنتدبين - تظهر فقط عند اختيار تقرير حصر غياب اليوم الحالي */}
           {showDelegationSettings && (
-            <Card className={isMobile ? 'border-0 shadow-none' : ''}>
-              <CardHeader>
-                <CardTitle className="text-lg md:text-xl">إعدادات تقرير الغياب اليومي</CardTitle>
-              </CardHeader>
-              <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="delegatedToSchool">منتدبين إلى المدرسة</Label>
-                  <Select 
-                    value={delegatedToSchool} 
-                    onValueChange={(value) => setDelegatedToSchool(value)}
-                  >
-                    <SelectTrigger className={isMobile ? 'w-full' : ''}>
-                      <SelectValue placeholder="اختر عدد المنتدبين إلى المدرسة" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[...Array(11).keys()].map(num => (
-                        <SelectItem key={`to-${num}`} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-                <div className="space-y-2">
-                  <Label htmlFor="delegatedFromSchool">منتدبين من المدرسة</Label>
-                  <Select 
-                    value={delegatedFromSchool} 
-                    onValueChange={(value) => setDelegatedFromSchool(value)}
-                  >
-                    <SelectTrigger className={isMobile ? 'w-full' : ''}>
-                      <SelectValue placeholder="اختر عدد المنتدبين من المدرسة" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {[...Array(11).keys()].map(num => (
-                        <SelectItem key={`from-${num}`} value={num.toString()}>
-                          {num}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </CardContent>
-            </Card>
-          )}
+  <Card className={isMobile ? 'border-0 shadow-none' : ''}>
+    <CardHeader>
+      <CardTitle className="text-lg md:text-xl">إعدادات تقرير الغياب اليومي</CardTitle>
+    </CardHeader>
+    <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      <div className="space-y-2">
+        <Label htmlFor="delegatedToSchool">منتدبين إلى المدرسة</Label>
+        <Select 
+          value={delegatedToSchool} 
+          onValueChange={(value) => setDelegatedToSchool(value)}
+        >
+          <SelectTrigger className={isMobile ? 'w-full' : ''}>
+            <SelectValue placeholder="اختر عدد المنتدبين إلى المدرسة" />
+          </SelectTrigger>
+          <SelectContent className="max-h-60 overflow-y-auto">
+            {[...Array(51).keys()].map(num => (
+              <SelectItem key={`to-${num}`} value={num.toString()}>
+                {num}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+      <div className="space-y-2">
+        <Label htmlFor="delegatedFromSchool">منتدبين من المدرسة</Label>
+        <Select 
+          value={delegatedFromSchool} 
+          onValueChange={(value) => setDelegatedFromSchool(value)}
+        >
+          <SelectTrigger className={isMobile ? 'w-full' : ''}>
+            <SelectValue placeholder="اختر عدد المنتدبين من المدرسة" />
+          </SelectTrigger>
+          <SelectContent className="max-h-60 overflow-y-auto">
+            {[...Array(51).keys()].map(num => (
+              <SelectItem key={`from-${num}`} value={num.toString()}>
+                {num}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+    </CardContent>
+  </Card>
+)}
 
           <Card className={isMobile ? 'border-0 shadow-none' : ''}>
             <CardHeader>
@@ -590,7 +590,7 @@ const Reports = () => {
                       <Printer className="ml-2 h-4 w-4" />
                       {isMobile ? 'طباعة' : 'طباعة التقرير'}
                     </Button>
-{/*                     <Button 
+                    {/* <Button 
                       variant="outline" 
                       onClick={exportToPDF} 
                       disabled={reportData.length === 0}
